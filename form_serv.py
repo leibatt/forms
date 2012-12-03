@@ -15,9 +15,12 @@ app = Flask(__name__)
 
 @app.route('/reg/', methods=["POST", "GET"])
 def get_data2():
-    session['user_id'] = str(uuid.uuid4())
     return render_template('register.html')
 
-@app.route('/regpost/', methods=["POST", "GET"])
+@app.route('/login/', methods=["POST"])
 def register(request):
     form = RegistrationForm(request.POST)
+    if form.validate():
+        print "received username:",form.username.data
+        print "received email:",form.email.data
+        print "accept rules:",form.accept_rules.data

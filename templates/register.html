@@ -1,0 +1,12 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<form method="POST" action="/login">
+		    <div>{{ form.username.label }}: {{ form.username(class="css_class") }}</div>
+		    <div>{{ form.email.label }}: {{ form.email() }}</div>
+		    <div>{{ form.password.label }}: {{ form.password() }}</div>
+		    <div>{{ form.accept_rules.label }}: {{ form.accept_rules() }}</div>
+		</form>
+	</body>
+</html>
