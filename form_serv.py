@@ -1,6 +1,9 @@
 from flask import Flask,flash, session, request, render_template, g, redirect, send_file, url_for
 import basic_form
+from database import db_session,init_db
 app = Flask(__name__)
+
+init_db()
 
 app.secret_key = "4"
 
@@ -23,6 +26,10 @@ def register():
 @app.route('/done/',methods=["POST","GET"])
 def done():
     return render_template('done.html')
+
+@app.teardown_request
+def shutdown_session(exception=None):
+    db_session.remove()
 
 if __name__ == "__main__":
     app.debug = True
