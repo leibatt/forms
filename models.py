@@ -34,6 +34,8 @@ class SurveyQuestion(Base):
 	id = Column(Integer, primary_key=True) # question id
 	question_text = Column(Text, nullable=False) #text of the question
 	input_type = Column(String(50),nullable=False) #checkboxes, menus, textbox, etc.
+	response_type = Column(String(10)) #number, string, null if checkbox
+	parent_question = Column(Integer) # if this is a subquestion, which question is the parent
 	survey_id = Column(Integer,ForeignKey("surveys.id"),nullable=False) #which survey this is
 
 	survey = relationship("Survey",backref=backref('questions'))
@@ -72,6 +74,7 @@ class SurveyResponse(Base):
 class UserResponse(Base):
 	__tablename__ = "user_responses"
 	value = Column(Text) #user's response text, may be empty or null
+	comment = Column(Text) # additional comments from user (i.e. elaborate on "Other")
 	user_id = Column(Integer,ForeignKey("users.id"),primary_key=True)
 	question_id = Column(Integer,ForeignKey("survey_questions.id"),primary_key=True)
 	response_id = Column(Integer,ForeignKey("survey_responses.id")) #may not have predefined survey response
