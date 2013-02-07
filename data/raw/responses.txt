@@ -22,7 +22,7 @@ value,question_id
 "Hourly",12
 "Personal",13
 "Public",13
-8,"Desktop",14
+"Desktop",14
 "Laptop",14
 "Tablet/iPad",14
 "Smart phone",14

@@ -2,7 +2,9 @@ import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy.ext import declarative
 
-engine = sqlalchemy.create_engine('sqlite:///:memory:',echo=True,convert_unicode=True)
+
+engine = sqlalchemy.create_engine('sqlite:///data/sqlite/temp.db',echo=True,convert_unicode=True)
+#engine = sqlalchemy.create_engine('sqlite:///:memory:',echo=True,convert_unicode=True)
 
 #should only be called once globally or at module level
 db_session = sqlalchemy.orm.scoped_session(sqlalchemy.orm.sessionmaker(autocommit=False,

@@ -1,11 +1,14 @@
 from flask import Flask,flash, session, request, render_template, g, redirect, send_file, url_for
 import basic_form
+import forms
 from database import db_session,init_db
 app = Flask(__name__)
 
 init_db()
 
 app.secret_key = "4"
+
+forms.show_survey("pre")
 
 @app.route('/reg/', methods=["POST", "GET"])
 def main():
