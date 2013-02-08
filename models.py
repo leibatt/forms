@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, backref
 from database import Base
+import datetime
 
 #table storing all users by flask session id,
 #and whether they did the surveys
@@ -43,10 +44,12 @@ class SurveyQuestion(Base):
 	#questions must be unique for each survey
 	__table_args__ = (UniqueConstraint('survey_id', 'question_text', name='uix_1'),)
 
-	def __init__(self,survey_id,question_text,input_type):
+	def __init__(self,question_text,input_type,response_type,parent_question,survey_id):
 		self.survey_id = survey_id
 		self.question_text = question_text
 		self.input_type = input_type
+		self.response_type = response_type
+		self.parent_question = parent_question
 
 	def __repr__(self):
 		return "SurveyQuestion(%r, %r, %r)" % (self.survey_id,self.question_text,self.input_type)
@@ -61,12 +64,11 @@ class SurveyResponse(Base):
 	question = relationship("SurveyQuestion",backref=backref("responses"))
 
 	#responses must be unique for each question
-	__table_args__ = (UniqueConstraint('question_id', 'value', name='uix_1'),)
+	__table_args__ = (UniqueConstraint('question_id', 'value', name='uix_2'),)
 
-	def __init__(self,survey_id,question_id,value):
-		self.survey_id = survey_id
+	def __init__(self,value,question_id):
 		self.value = value
-		self.input_type = input_type
+		self.question_id = question_id
 
 	def __repr__(self):
 		return "SurveyResponse(%r, %r)" % (self.question_id,self.value)
@@ -78,19 +80,22 @@ class UserResponse(Base):
 	user_id = Column(Integer,ForeignKey("users.id"),primary_key=True)
 	question_id = Column(Integer,ForeignKey("survey_questions.id"),primary_key=True)
 	response_id = Column(Integer,ForeignKey("survey_responses.id")) #may not have predefined survey response
+	timestamp = Column(DateTime)
 
 	user = relationship("User",backref=backref("responses"))
 	question = relationship("SurveyQuestion",backref=backref("user_responses"))
 	response = relationship("SurveyResponse",backref=backref("user_responses"))
 
-	def __init__(self,user_id,question_id,response_id,value):
+	def __init__(self,value,comment,user_id,question_id,response_id):
 		self.user_id = user_id
 		self.question_id = question_id
 		self.response_id = response_id
 		self.value = value
+		self.comment = comment
+		self.timestamp = datetime.datetime.now()
 
 	def __repr__(self):
-		return "UserResponse(%r, %r, %r, %r)" % (self.user_id,self.question_id,self.response.id,value)
+		return "UserResponse(%r, %r, %r, %r, %r)" % (self.user_id,self.question_id,self.response_id,self.value,self.timestamp)
 
 # user movement history
 class UserTrace(Base):
@@ -105,15 +110,15 @@ class UserTrace(Base):
 	user = relationship("User",backref=backref("traces"))
 	dataset = relationship("DataSet",backref=backref("traces"))
 
-	def __init__(self,user_id,tile_id,timestamp,query,dataset_id):
+	def __init__(self,tile_id,query,user_id,dataset_id):
 		self.user_id = user_id
 		self.tile_id = tile_id
-		self.timestamp = timestamp
+		self.timestamp = datetime.datetime.now()
 		self.query = query
 		self.dataset_id = dataset_id
 
 	def __repr__():
-		return "UserTrace(%r, %r, %r, %r, %r, %r)" % (self.user_id,self.tile_id,self.timestamp,self.query,self.dataset_id)
+		return "UserTrace(%r, %r, %r, %r, %r, %r)" % (self.user_id,self.tile_id,self.query,self.dataset_id,self.timestamp)
 
 # predetermined data sets
 class DataSet(Base):
